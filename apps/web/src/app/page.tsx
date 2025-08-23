@@ -37,6 +37,11 @@ export default function HomePage() {
                   Become a Mentor
                 </Button>
               </Link>
+              <Link href="/dashboard">
+                <Button variant="outline" size="lg" className="text-lg px-8 py-3 border-2 border-indigo-600 text-indigo-600 hover:bg-indigo-600 hover:text-white">
+                  Go to Dashboard
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
