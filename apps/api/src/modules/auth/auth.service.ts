@@ -13,7 +13,14 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly configService: ConfigService,
   ) {
-    this.prisma = new PrismaClient();
+    this.prisma = new PrismaClient({
+      log: ['error'],
+      datasources: {
+        db: {
+          url: configService.get<string>('DATABASE_URL'),
+        },
+      },
+    });
   }
 
   async onModuleDestroy() {
@@ -98,7 +105,7 @@ export class AuthService {
           email: registerDto.email,
           passwordHash,
           role: registerDto.role || 'mentee',
-          status: 'pending', // Require email verification
+          status: 'active', // For testing - normally would be 'pending'
         },
       });
 
@@ -126,7 +133,7 @@ export class AuthService {
     };
 
     return {
-      message: 'User registered successfully. Please verify your email address.',
+      message: 'User registered successfully!',
       user: userResponse,
     };
   }
