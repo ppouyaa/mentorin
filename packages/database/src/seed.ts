@@ -6,26 +6,27 @@ async function main() {
 
   // Create skills
   const skills = [
-    { slug: 'javascript', nameEn: 'JavaScript', nameFa: 'جاوااسکریپت', category: 'Programming', level: 1 },
-    { slug: 'typescript', nameEn: 'TypeScript', nameFa: 'تایپ‌اسکریپت', category: 'Programming', level: 1 },
-    { slug: 'react', nameEn: 'React', nameFa: 'ری‌اکت', category: 'Frontend', level: 1 },
-    { slug: 'nodejs', nameEn: 'Node.js', nameFa: 'نود جی‌اس', category: 'Backend', level: 1 },
-    { slug: 'python', nameEn: 'Python', nameFa: 'پایتون', category: 'Programming', level: 1 },
-    { slug: 'java', nameEn: 'Java', nameFa: 'جاوا', category: 'Programming', level: 1 },
-    { slug: 'aws', nameEn: 'AWS', nameFa: 'ای‌دبلیو‌اس', category: 'Cloud', level: 1 },
-    { slug: 'docker', nameEn: 'Docker', nameFa: 'داکر', category: 'DevOps', level: 1 },
-    { slug: 'kubernetes', nameEn: 'Kubernetes', nameFa: 'کوبرنتیز', category: 'DevOps', level: 1 },
-    { slug: 'machine-learning', nameEn: 'Machine Learning', nameFa: 'یادگیری ماشین', category: 'AI', level: 1 },
-    { slug: 'data-science', nameEn: 'Data Science', nameFa: 'علم داده', category: 'AI', level: 1 },
-    { slug: 'product-management', nameEn: 'Product Management', nameFa: 'مدیریت محصول', category: 'Business', level: 1 },
-    { slug: 'ui-ux-design', nameEn: 'UI/UX Design', nameFa: 'طراحی رابط کاربری', category: 'Design', level: 1 },
-    { slug: 'mobile-development', nameEn: 'Mobile Development', nameFa: 'توسعه موبایل', category: 'Programming', level: 1 },
-    { slug: 'cybersecurity', nameEn: 'Cybersecurity', nameFa: 'امنیت سایبری', category: 'Security', level: 1 },
+
+    { name: 'JavaScript', category: 'Programming', description: 'Modern JavaScript programming' },
+    { name: 'TypeScript', category: 'Programming', description: 'TypeScript development' },
+    { name: 'React', category: 'Frontend', description: 'React.js framework' },
+    { name: 'Node.js', category: 'Backend', description: 'Node.js runtime' },
+    { name: 'Python', category: 'Programming', description: 'Python programming' },
+    { name: 'Java', category: 'Programming', description: 'Java development' },
+    { name: 'AWS', category: 'Cloud', description: 'Amazon Web Services' },
+    { name: 'Docker', category: 'DevOps', description: 'Containerization' },
+    { name: 'Kubernetes', category: 'DevOps', description: 'Container orchestration' },
+    { name: 'Machine Learning', category: 'AI', description: 'Machine learning algorithms' },
+    { name: 'Data Science', category: 'AI', description: 'Data analysis and science' },
+    { name: 'Product Management', category: 'Business', description: 'Product strategy and management' },
+    { name: 'UI/UX Design', category: 'Design', description: 'User interface and experience design' },
+    { name: 'Mobile Development', category: 'Programming', description: 'Mobile app development' },
+    { name: 'Cybersecurity', category: 'Security', description: 'Information security' },
   ];
 
   for (const skill of skills) {
     await prisma.skill.upsert({
-      where: { slug: skill.slug },
+      where: { name: skill.name },
       update: {},
       create: skill,
     });
@@ -133,9 +134,9 @@ async function main() {
   });
 
   // Add skills to mentor
-  const jsSkill = await prisma.skill.findUnique({ where: { slug: 'javascript' } });
-  const reactSkill = await prisma.skill.findUnique({ where: { slug: 'react' } });
-  const tsSkill = await prisma.skill.findUnique({ where: { slug: 'typescript' } });
+  const jsSkill = await prisma.skill.findUnique({ where: { name: 'JavaScript' } });
+  const reactSkill = await prisma.skill.findUnique({ where: { name: 'React' } });
+  const tsSkill = await prisma.skill.findUnique({ where: { name: 'TypeScript' } });
 
   if (jsSkill && reactSkill && tsSkill) {
     await prisma.userSkill.createMany({
@@ -143,23 +144,20 @@ async function main() {
         {
           userId: mentor.id,
           skillId: jsSkill.id,
-          level: 5,
-          yearsOfExperience: 8,
-          isVerified: true,
+          level: 'expert',
+          verified: true,
         },
         {
           userId: mentor.id,
           skillId: reactSkill.id,
-          level: 5,
-          yearsOfExperience: 6,
-          isVerified: true,
+          level: 'expert',
+          verified: true,
         },
         {
           userId: mentor.id,
           skillId: tsSkill.id,
-          level: 4,
-          yearsOfExperience: 4,
-          isVerified: true,
+          level: 'advanced',
+          verified: true,
         },
       ],
       skipDuplicates: true,
@@ -176,9 +174,7 @@ async function main() {
       durationMinutes: 60,
       priceCents: 15000, // $150
       currency: 'USD',
-      isGroup: false,
       tags: ['react', 'typescript', 'code-review', 'frontend'],
-      skills: [jsSkill?.id, reactSkill?.id, tsSkill?.id].filter(Boolean) as number[],
       isActive: true,
     },
   });
