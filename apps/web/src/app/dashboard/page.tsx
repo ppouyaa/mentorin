@@ -2,7 +2,7 @@
 
 import { useSession, signOut } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { 
   Home, 
@@ -20,13 +20,47 @@ import {
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const [stats, setStats] = useState({
+    totalSessions: 0,
+    activeConnections: 0,
+    totalHours: 0,
+    averageRating: 0,
+    role: 'mentee'
+  });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (status === 'loading') return; // Still loading
     if (!session) router.push('/auth/login'); // Not logged in
   }, [session, status, router]);
 
-  if (status === 'loading') {
+  useEffect(() => {
+    if (session?.accessToken) {
+      fetchDashboardStats();
+    }
+  }, [session]);
+
+  const fetchDashboardStats = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001'}/api/v1/dashboard/stats`, {
+        headers: {
+          'Authorization': `Bearer ${session?.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (status === 'loading' || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
@@ -50,11 +84,31 @@ export default function DashboardPage() {
     { name: 'Settings', href: '/settings', icon: Settings, current: false },
   ];
 
-  const stats = [
-    { name: 'Total Sessions', value: '12', change: '+2.5%', changeType: 'positive' },
-    { name: 'Active Mentors', value: '3', change: '+1', changeType: 'positive' },
-    { name: 'Hours Learned', value: '24', change: '+8', changeType: 'positive' },
-    { name: 'Rating', value: '4.8', change: '+0.2', changeType: 'positive' },
+  const statsData = [
+    { 
+      name: stats.role === 'mentor' ? 'Total Sessions Led' : 'Total Sessions', 
+      value: stats.totalSessions.toString(), 
+      change: '', 
+      changeType: 'neutral' 
+    },
+    { 
+      name: stats.role === 'mentor' ? 'Active Mentees' : 'Active Mentors', 
+      value: stats.activeConnections.toString(), 
+      change: '', 
+      changeType: 'neutral' 
+    },
+    { 
+      name: 'Total Hours', 
+      value: stats.totalHours.toString(), 
+      change: '', 
+      changeType: 'neutral' 
+    },
+    { 
+      name: 'Average Rating', 
+      value: stats.averageRating > 0 ? stats.averageRating.toString() : 'N/A', 
+      change: '', 
+      changeType: 'neutral' 
+    },
   ];
 
   return (
@@ -115,18 +169,20 @@ export default function DashboardPage() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            {stats.map((stat) => (
+            {statsData.map((stat) => (
               <div key={stat.name} className="bg-white rounded-lg shadow p-6">
                 <div className="flex items-center">
                   <div className="flex-1">
                     <p className="text-sm font-medium text-gray-600">{stat.name}</p>
                     <p className="text-2xl font-semibold text-gray-900">{stat.value}</p>
                   </div>
-                  <div className={`text-sm ${
-                    stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
-                  }`}>
-                    {stat.change}
-                  </div>
+                  {stat.change && (
+                    <div className={`text-sm ${
+                      stat.changeType === 'positive' ? 'text-green-600' : 'text-red-600'
+                    }`}>
+                      {stat.change}
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

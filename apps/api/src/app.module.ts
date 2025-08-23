@@ -16,6 +16,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
 import { MatchingModule } from './modules/matching/matching.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { HealthModule } from './modules/health/health.module';
+import { DashboardModule } from './modules/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -59,6 +60,7 @@ import { HealthModule } from './modules/health/health.module';
     MatchingModule,
     NotificationsModule,
     HealthModule,
+    DashboardModule,
   ],
 })
 export class AppModule {}
