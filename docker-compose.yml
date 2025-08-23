@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: mentorship-postgres
+    environment:
+      POSTGRES_DB: mentorship
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - mentorship-network
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: mentorship-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - mentorship-network
+
+  # LiveKit Server (for video calls)
+  livekit:
+    image: livekit/livekit-server:latest
+    container_name: mentorship-livekit
+    ports:
+      - "7880:7880"
+      - "7881:7881"
+      - "7882:7882/udp"
+    environment:
+      LIVEKIT_KEYS: "your-api-key: your-api-secret"
+    volumes:
+      - ./livekit.yaml:/config.yaml
+    command: --config /config.yaml
+    networks:
+      - mentorship-network
+
+  # Mailhog (for email testing)
+  mailhog:
+    image: mailhog/mailhog:latest
+    container_name: mentorship-mailhog
+    ports:
+      - "1025:1025"  # SMTP
+      - "8025:8025"  # Web UI
+    networks:
+      - mentorship-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  mentorship-network:
+    driver: bridge
