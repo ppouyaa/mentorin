@@ -26,13 +26,17 @@ export default function HomePage() {
               Connect with experienced mentors or share your expertise with eager learners.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="text-lg px-8 py-3">
-                Find a Mentor
-                <ArrowRight className="ml-2 h-5 w-5" />
-              </Button>
-              <Button variant="outline" size="lg" className="text-lg px-8 py-3">
-                Become a Mentor
-              </Button>
+              <Link href="/auth/signup">
+                <Button size="lg" className="text-lg px-8 py-3">
+                  Find a Mentor
+                  <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+              <Link href="/auth/signup">
+                <Button variant="outline" size="lg" className="text-lg px-8 py-3">
+                  Become a Mentor
+                </Button>
+              </Link>
             </div>
           </div>
         </div>
