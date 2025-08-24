@@ -62,7 +62,7 @@ export default function OfferingsPage() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    type: 'one_on_one' as const,
+    type: 'one_on_one' as 'one_on_one' | 'group' | 'cohort' | 'office_hours',
     durationMinutes: 60,
     priceCents: 5000,
     currency: 'USD',
