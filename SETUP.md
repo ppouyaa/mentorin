@@ -4,6 +4,28 @@
 
 This is a comprehensive mentorship platform with the following architecture:
 
+### 🏗️ Architecture Overview
+
+This is a **full-stack application** that requires **two separate servers**:
+
+```
+┌─────────────────┐    HTTP Requests    ┌─────────────────┐
+│   Frontend      │ ──────────────────► │    Backend      │
+│   (Next.js)     │                     │   (NestJS)      │
+│   Port 3000     │                     │   Port 3001     │
+│                 │ ◄────────────────── │                 │
+│ - Web Interface │    JSON Responses   │ - API Endpoints │
+│ - User Sessions │                     │ - Database      │
+│ - UI/UX         │                     │ - Business Logic│
+└─────────────────┘                     └─────────────────┘
+```
+
+**Why Two Servers?**
+- **Frontend (3000)**: Serves the web interface that users interact with
+- **Backend (3001)**: Provides API endpoints that process requests and manage data
+- **Separation of Concerns**: Allows independent development and scaling
+- **Modern Architecture**: Industry standard for scalable web applications
+
 ### ✅ Completed Components
 
 #### 1. **Monorepo Structure**
@@ -86,8 +108,17 @@ npm run db:migrate
 npm run db:seed
 
 # 5. Start development servers
-npm run dev:web    # Frontend (http://localhost:3000)
-npm run dev:api    # Backend (http://localhost:3001)
+# You need to run TWO servers for this full-stack application:
+
+# Terminal 1: Start the Frontend (Next.js)
+npm run dev:web    # Frontend (http://localhost:3000) - Serves the web interface
+
+# Terminal 2: Start the Backend (NestJS) 
+npm run dev:api    # Backend (http://localhost:3001) - Provides API endpoints
+
+# Why two servers? This is a modern full-stack architecture:
+# - Frontend (3000): Handles UI, user interactions, and makes API calls
+# - Backend (3001): Processes business logic, database operations, and authentication
 ```
 
 ## 📊 Database Schema
@@ -223,9 +254,13 @@ The platform includes a comprehensive database schema with:
 ### Available Scripts
 ```bash
 # Development
-npm run dev              # Start all services
-npm run dev:web          # Frontend only
-npm run dev:api          # Backend only
+npm run dev              # Start all services (both frontend and backend)
+npm run dev:web          # Frontend only (Next.js on port 3000)
+npm run dev:api          # Backend only (NestJS on port 3001)
+
+# Note: For development, you typically need both servers running:
+# - Frontend (3000): Web interface users interact with
+# - Backend (3001): API that processes requests and manages data
 
 # Database
 npm run db:generate      # Generate Prisma client
