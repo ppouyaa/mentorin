@@ -2,10 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import AppLayout from '@/components/layout/app-layout';
+import { Card, CardContent, CardHeader, CardTitle } from '@mentorship/ui';
+import { Button } from '@mentorship/ui';
+import { Badge } from '@mentorship/ui';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@mentorship/ui';
 import { 
   CreditCard, 
   DollarSign, 
@@ -171,7 +172,8 @@ export default function PaymentsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <AppLayout>
+      <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Payments</h1>
 
       <Tabs defaultValue="history" className="w-full">
@@ -380,6 +382,7 @@ export default function PaymentsPage() {
           </Card>
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

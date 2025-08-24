@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { 
   Search, 
@@ -18,6 +17,7 @@ import {
   ChevronUp
 } from 'lucide-react';
 import { Button, Card } from '@mentorship/ui';
+import AppLayout from '@/components/layout/app-layout';
 
 interface Mentor {
   id: string;
@@ -54,8 +54,7 @@ interface Skill {
 }
 
 export default function MentorsPage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { data: session } = useSession();
   
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -70,15 +69,11 @@ export default function MentorsPage() {
   const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
-    if (status === 'loading') return;
-    if (!session) {
-      router.push('/auth/login');
-      return;
+    if (session) {
+      fetchSkills();
+      fetchMentors();
     }
-    
-    fetchSkills();
-    fetchMentors();
-  }, [session, status, router]);
+  }, [session]);
 
   const fetchSkills = async () => {
     try {
@@ -160,37 +155,16 @@ export default function MentorsPage() {
     }
   };
 
-  if (status === 'loading' || loading) {
+  if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center h-64">
         <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
       </div>
     );
   }
 
-  if (!session) {
-    return null; // Will redirect
-  }
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">Find Mentors</h1>
-              <p className="text-gray-600 mt-1">Connect with experienced professionals</p>
-            </div>
-            <Link href="/dashboard">
-              <Button variant="outline">
-                Back to Dashboard
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </div>
-
+    <AppLayout>
       <div className="container mx-auto px-4 py-8">
         {/* Search and Filters */}
         <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
@@ -436,6 +410,6 @@ export default function MentorsPage() {
           </div>
         )}
       </div>
-    </div>
+    </AppLayout>
   );
 }

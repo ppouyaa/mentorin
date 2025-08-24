@@ -2,11 +2,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@mentorship/ui';
+import { Button } from '@mentorship/ui';
+import { Input } from '@mentorship/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@mentorship/ui';
 import { Send, Search, MoreVertical } from 'lucide-react';
+import AppLayout from '@/components/layout/app-layout';
 
 interface Message {
   id: string;
@@ -133,16 +134,14 @@ export default function ChatPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-1">
-              <div className="h-96 bg-gray-200 rounded"></div>
-            </div>
-            <div className="lg:col-span-2">
-              <div className="h-96 bg-gray-200 rounded"></div>
-            </div>
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-1">
+            <div className="h-96 bg-gray-200 rounded"></div>
+          </div>
+          <div className="lg:col-span-2">
+            <div className="h-96 bg-gray-200 rounded"></div>
           </div>
         </div>
       </div>
@@ -150,8 +149,7 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">Messages</h1>
+    <AppLayout>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 h-[600px]">
         {/* Threads List */}
@@ -309,6 +307,6 @@ export default function ChatPage() {
           )}
         </Card>
       </div>
-    </div>
+    </AppLayout>
   );
 }
