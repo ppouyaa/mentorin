@@ -644,6 +644,7 @@ export default function SettingsPage() {
           {saving ? 'Saving...' : 'Save Changes'}
         </Button>
       </div>
+      </div>
     </AppLayout>
   );
 }
