@@ -1,6 +1,6 @@
 'use client';
 
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -31,7 +31,7 @@ interface HeaderProps {
 }
 
 export default function Header({ title, subtitle, showBreadcrumbs = true }: HeaderProps) {
-  const { data: session, signOut } = useSession();
+  const { data: session } = useSession();
   const pathname = usePathname();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
