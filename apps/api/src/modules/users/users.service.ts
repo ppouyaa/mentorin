@@ -16,7 +16,6 @@ export class UsersService {
   async findMentors(query?: {
     search?: string;
     skills?: string[];
-    maxRate?: number;
     experienceYears?: number;
     limit?: number;
     offset?: number;
@@ -24,7 +23,6 @@ export class UsersService {
     const {
       search,
       skills,
-      maxRate,
       experienceYears,
       limit = 20,
       offset = 0
@@ -80,15 +78,7 @@ export class UsersService {
       };
     }
 
-    // Add max rate filter
-    if (maxRate) {
-      where.mentorProfile = {
-        ...where.mentorProfile,
-        hourlyRateCents: {
-          lte: maxRate * 100, // Convert dollars to cents
-        },
-      };
-    }
+
 
     // Add experience years filter
     if (experienceYears) {
@@ -117,7 +107,6 @@ export class UsersService {
           mentorProfile: {
             select: {
               headline: true,
-              hourlyRateCents: true,
               experienceYears: true,
               specializations: true,
               rating: true,
@@ -154,7 +143,6 @@ export class UsersService {
         profile: mentor.profile,
         mentorProfile: mentor.mentorProfile ? {
           ...mentor.mentorProfile,
-          hourlyRate: mentor.mentorProfile.hourlyRateCents / 100, // Convert cents to dollars
         } : null,
         skills: mentor.userSkills.map(us => ({
           name: us.skill.name,
@@ -190,7 +178,6 @@ export class UsersService {
         mentorProfile: {
           select: {
             headline: true,
-            hourlyRateCents: true,
             experienceYears: true,
             specializations: true,
             rating: true,
@@ -259,7 +246,6 @@ export class UsersService {
       profile: mentor.profile,
       mentorProfile: mentor.mentorProfile ? {
         ...mentor.mentorProfile,
-        hourlyRate: mentor.mentorProfile.hourlyRateCents / 100,
       } : null,
       skills: mentor.userSkills.map(us => ({
         name: us.skill.name,
@@ -337,7 +323,6 @@ export class UsersService {
       expertise: user.mentorProfile?.specializations || [],
       experience: user.mentorProfile?.experienceYears,
       education: mentorEducation?.degree,
-      hourlyRate: user.mentorProfile?.hourlyRateCents ? user.mentorProfile.hourlyRateCents / 100 : undefined,
       availability: mentorAvailability?.times || [],
       languages: user.profile.languages || [],
       // Mentee-specific fields (stored in matchPreferences)
@@ -392,7 +377,7 @@ export class UsersService {
         data: {
           userId,
           headline: profileFields.bio,
-          hourlyRateCents: profileFields.hourlyRate * 100,
+          hourlyRateCents: 0, // Default to 0 since we're removing hourly rate
           experienceYears: profileFields.experience,
           specializations: profileFields.expertise,
           education: {
@@ -470,7 +455,7 @@ export class UsersService {
           where: { userId },
           data: {
             headline: profileData.bio,
-            hourlyRateCents: profileData.hourlyRate * 100,
+            hourlyRateCents: 0, // Default to 0 since we're removing hourly rate
             experienceYears: profileData.experience,
             specializations: profileData.expertise,
             education: {
@@ -490,7 +475,7 @@ export class UsersService {
           data: {
             userId,
             headline: profileData.bio,
-            hourlyRateCents: profileData.hourlyRate * 100,
+            hourlyRateCents: 0, // Default to 0 since we're removing hourly rate
             experienceYears: profileData.experience,
             specializations: profileData.expertise,
             education: {

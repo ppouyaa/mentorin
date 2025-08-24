@@ -37,7 +37,6 @@ const profileSchema = z.object({
   expertise: z.array(z.string()).optional(),
   experience: z.number().optional(),
   education: z.string().optional(),
-  hourlyRate: z.number().optional(),
   availability: z.array(z.string()).optional(),
   languages: z.array(z.string()).optional(),
   goals: z.array(z.string()).optional(),
@@ -94,7 +93,6 @@ interface UserProfile {
   expertise?: string[];
   experience?: number;
   education?: string;
-  hourlyRate?: number;
   availability?: string[];
   languages?: string[];
   mentoringStyle?: string;
@@ -156,12 +154,11 @@ export default function ProfilePage() {
           website: data.website || '',
           linkedin: data.linkedin || '',
           github: data.github || '',
-          // Role-specific fields
-          expertise: data.expertise || [],
-          experience: data.experience,
-          education: data.education || '',
-          hourlyRate: data.hourlyRate,
-          availability: data.availability || [],
+                     // Role-specific fields
+           expertise: data.expertise || [],
+           experience: data.experience,
+           education: data.education || '',
+           availability: data.availability || [],
           languages: data.languages || [],
           goals: data.goals || [],
           currentRole: data.currentRole || '',
@@ -228,7 +225,6 @@ export default function ProfilePage() {
       expertise: profile?.expertise || [],
       experience: profile?.experience,
       education: profile?.education || '',
-      hourlyRate: profile?.hourlyRate,
       availability: profile?.availability || [],
       languages: profile?.languages || [],
       goals: profile?.goals || [],
@@ -347,10 +343,7 @@ export default function ProfilePage() {
                              {/* Quick Stats */}
                {profile.role === 'mentor' && (
                  <div className="space-y-3 mt-6">
-                   <div className="flex justify-between items-center">
-                     <span className="text-sm text-gray-600">Hourly Rate</span>
-                     <span className="font-semibold">${profile.hourlyRate}/hr</span>
-                   </div>
+
                    <div className="flex justify-between items-center">
                      <span className="text-sm text-gray-600">Experience</span>
                      <span className="font-semibold">{profile.experience} years</span>
@@ -475,18 +468,7 @@ export default function ProfilePage() {
                              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                            />
                          </div>
-                         <div>
-                           <label className="block text-sm font-medium text-gray-700 mb-1">
-                             Hourly Rate (USD)
-                           </label>
-                           <input
-                             {...register('hourlyRate', { valueAsNumber: true })}
-                             type="number"
-                             min="10"
-                             max="1000"
-                             className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                           />
-                         </div>
+
                        </div>
                                                <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">

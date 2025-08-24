@@ -40,7 +40,6 @@ export class UsersController {
                 type: 'object',
                 properties: {
                   headline: { type: 'string' },
-                  hourlyRate: { type: 'number' },
                   experienceYears: { type: 'number' },
                   specializations: { type: 'array', items: { type: 'string' } },
                   rating: { type: 'number' },
@@ -70,14 +69,14 @@ export class UsersController {
   })
   @ApiQuery({ name: 'search', required: false, description: 'Search term for name, headline, or specializations' })
   @ApiQuery({ name: 'skills', required: false, description: 'Comma-separated list of skills' })
-  @ApiQuery({ name: 'maxRate', required: false, description: 'Maximum hourly rate in dollars' })
+
   @ApiQuery({ name: 'experienceYears', required: false, description: 'Minimum years of experience' })
   @ApiQuery({ name: 'limit', required: false, description: 'Number of results to return (default: 20)' })
   @ApiQuery({ name: 'offset', required: false, description: 'Number of results to skip (default: 0)' })
   async findMentors(
     @Query('search') search?: string,
     @Query('skills') skills?: string,
-    @Query('maxRate') maxRate?: string,
+
     @Query('experienceYears') experienceYears?: string,
     @Query('limit') limit?: string,
     @Query('offset') offset?: string,
@@ -86,7 +85,7 @@ export class UsersController {
     
     if (search) query.search = search;
     if (skills) query.skills = skills.split(',').map(s => s.trim());
-    if (maxRate) query.maxRate = parseFloat(maxRate);
+
     if (experienceYears) query.experienceYears = parseInt(experienceYears);
     if (limit) query.limit = parseInt(limit);
     if (offset) query.offset = parseInt(offset);
@@ -122,7 +121,6 @@ export class UsersController {
           type: 'object',
           properties: {
             headline: { type: 'string' },
-            hourlyRate: { type: 'number' },
             experienceYears: { type: 'number' },
             specializations: { type: 'array', items: { type: 'string' } },
             rating: { type: 'number' },

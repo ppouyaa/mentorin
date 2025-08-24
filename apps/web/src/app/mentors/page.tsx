@@ -10,7 +10,6 @@ import {
   Star, 
   MapPin, 
   Clock, 
-  DollarSign, 
   Users, 
   Calendar,
   ArrowRight,
@@ -33,7 +32,6 @@ interface Mentor {
   };
   mentorProfile: {
     headline: string;
-    hourlyRate: number;
     experienceYears: number;
     specializations: string[];
     rating: number;
@@ -64,7 +62,6 @@ export default function MentorsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [maxRate, setMaxRate] = useState<number | ''>('');
   const [experienceYears, setExperienceYears] = useState<number | ''>('');
   const [showFilters, setShowFilters] = useState(false);
   const [total, setTotal] = useState(0);
@@ -106,7 +103,6 @@ export default function MentorsPage() {
       const params = new URLSearchParams();
       if (searchTerm) params.append('search', searchTerm);
       if (selectedSkills.length > 0) params.append('skills', selectedSkills.join(','));
-      if (maxRate) params.append('maxRate', maxRate.toString());
       if (experienceYears) params.append('experienceYears', experienceYears.toString());
       if (isLoadMore) {
         params.append('offset', offset.toString());
@@ -153,7 +149,6 @@ export default function MentorsPage() {
   const clearFilters = () => {
     setSearchTerm('');
     setSelectedSkills([]);
-    setMaxRate('');
     setExperienceYears('');
     setOffset(0);
     fetchMentors();
@@ -255,19 +250,7 @@ export default function MentorsPage() {
                   </div>
                 </div>
 
-                {/* Max Rate Filter */}
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Max Hourly Rate ($)
-                  </label>
-                  <input
-                    type="number"
-                    placeholder="e.g., 100"
-                    value={maxRate}
-                    onChange={(e) => setMaxRate(e.target.value ? Number(e.target.value) : '')}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                  />
-                </div>
+
 
                 {/* Experience Years Filter */}
                 <div>
@@ -410,20 +393,14 @@ export default function MentorsPage() {
                     </div>
                   </div>
 
-                  {/* Location and Rate */}
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center space-x-1 text-sm text-gray-500">
-                      <MapPin className="h-4 w-4" />
-                      <span>
-                        {mentor.profile.city && mentor.profile.country
-                          ? `${mentor.profile.city}, ${mentor.profile.country}`
-                          : 'Remote'}
-                      </span>
-                    </div>
-                    <div className="flex items-center space-x-1 text-sm font-medium text-green-600">
-                      <DollarSign className="h-4 w-4" />
-                      <span>${mentor.mentorProfile.hourlyRate}/hr</span>
-                    </div>
+                  {/* Location */}
+                  <div className="flex items-center space-x-1 text-sm text-gray-500 mb-4">
+                    <MapPin className="h-4 w-4" />
+                    <span>
+                      {mentor.profile.city && mentor.profile.country
+                        ? `${mentor.profile.city}, ${mentor.profile.country}`
+                        : 'Remote'}
+                    </span>
                   </div>
 
                   {/* Response Time */}

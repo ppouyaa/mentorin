@@ -41,7 +41,7 @@ const mentorProfileSchema = baseProfileSchema.extend({
   experience: z.number().min(1, 'Years of experience must be at least 1').max(50, 'Years of experience must be less than 50'),
   education: z.string().min(1, 'Education background is required'),
   certifications: z.array(z.string()).optional(),
-  hourlyRate: z.number().min(10, 'Hourly rate must be at least $10').max(1000, 'Hourly rate must be less than $1000'),
+
   availability: z.array(z.string()).min(1, 'Please select at least one availability option'),
   languages: z.array(z.string()).min(1, 'Please select at least one language'),
   mentoringStyle: z.enum(['structured', 'casual', 'hands-on', 'theoretical']),
@@ -278,25 +278,7 @@ export default function ProfileSetupPage() {
             Mentoring Details
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Hourly Rate (USD) *
-              </label>
-              <div className="relative">
-                <span className="absolute left-3 top-2 text-gray-500">$</span>
-                <input
-                  {...register('hourlyRate', { valueAsNumber: true })}
-                  type="number"
-                  min="10"
-                  max="1000"
-                  className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="50"
-                />
-              </div>
-              {errors.hourlyRate && (
-                <p className="text-red-500 text-sm mt-1">{errors.hourlyRate.message}</p>
-              )}
-            </div>
+
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Maximum Mentees *

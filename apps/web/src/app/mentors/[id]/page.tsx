@@ -41,7 +41,6 @@ interface Mentor {
   };
   mentorProfile: {
     headline: string;
-    hourlyRate: number;
     experienceYears: number;
     specializations: string[];
     rating: number;
@@ -243,20 +242,17 @@ export default function MentorDetailPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <div className="flex items-center space-x-1 mb-2">
-                      <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                      <span className="text-lg font-semibold">
-                        {mentor.mentorProfile.rating.toFixed(1)}
-                      </span>
-                      <span className="text-gray-500">
-                        ({mentor.mentorProfile.totalReviews} reviews)
-                      </span>
-                    </div>
-                    <div className="text-2xl font-bold text-green-600">
-                      ${mentor.mentorProfile.hourlyRate}/hr
-                    </div>
-                  </div>
+                                     <div className="text-right">
+                     <div className="flex items-center space-x-1 mb-2">
+                       <Star className="h-5 w-5 text-yellow-400 fill-current" />
+                       <span className="text-lg font-semibold">
+                         {mentor.mentorProfile.rating.toFixed(1)}
+                       </span>
+                       <span className="text-gray-500">
+                         ({mentor.mentorProfile.totalReviews} reviews)
+                       </span>
+                     </div>
+                   </div>
                 </div>
               </div>
             </Card>
