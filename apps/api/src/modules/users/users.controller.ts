@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Put, Query, Param, UseGuards, Body, Request } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBearerAuth, ApiQuery } from '@nestjs/swagger';
 import { UsersService } from './users.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -215,5 +215,93 @@ export class UsersController {
   })
   async getSkills() {
     return this.usersService.getSkills();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Get current user profile' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Profile retrieved successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        id: { type: 'string' },
+        displayName: { type: 'string' },
+        bio: { type: 'string' },
+        location: { type: 'string' },
+        timezone: { type: 'string' },
+        avatarUrl: { type: 'string' },
+        website: { type: 'string' },
+        linkedin: { type: 'string' },
+        github: { type: 'string' },
+        role: { type: 'string' },
+        expertise: { type: 'array', items: { type: 'string' } },
+        experience: { type: 'number' },
+        education: { type: 'string' },
+        hourlyRate: { type: 'number' },
+        availability: { type: 'array', items: { type: 'string' } },
+        languages: { type: 'array', items: { type: 'string' } },
+        mentoringStyle: { type: 'string' },
+        maxMentees: { type: 'number' },
+        goals: { type: 'array', items: { type: 'string' } },
+        currentRole: { type: 'string' },
+        skills: { type: 'array', items: { type: 'string' } },
+        preferredMentoringStyle: { type: 'string' },
+        budget: { type: 'string' },
+        timeCommitment: { type: 'string' },
+      },
+    }
+  })
+  @ApiResponse({ status: 404, description: 'Profile not found' })
+  async getProfile(@Request() req) {
+    const profile = await this.usersService.getProfile(req.user.id);
+    if (!profile) {
+      return { error: 'Profile not found' };
+    }
+    return profile;
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('profile')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create user profile' })
+  @ApiResponse({ 
+    status: 201, 
+    description: 'Profile created successfully' 
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 409, description: 'Profile already exists' })
+  async createProfile(@Request() req, @Body() profileData: any) {
+    return this.usersService.createProfile(req.user.id, profileData);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('profile')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update user profile' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Profile updated successfully' 
+  })
+  @ApiResponse({ status: 400, description: 'Bad request' })
+  @ApiResponse({ status: 404, description: 'Profile not found' })
+  async updateProfile(@Request() req, @Body() profileData: any) {
+    return this.usersService.updateProfile(req.user.id, profileData);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('profile/make-public')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Make mentor profile public' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'Profile made public successfully' 
+  })
+  @ApiResponse({ status: 400, description: 'User is not a mentor' })
+  @ApiResponse({ status: 404, description: 'Profile not found' })
+  async makeProfilePublic(@Request() req) {
+    return this.usersService.makeProfilePublic(req.user.id);
   }
 }

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Inter, Vazirmatn } from 'next/font/google';
 import './globals.css';
 import { Providers } from './providers';
@@ -20,8 +20,8 @@ export const metadata: Metadata = {
   description: 'Connect with mentors and mentees for personalized learning experiences',
   keywords: ['mentorship', 'learning', 'education', 'mentoring', 'skills'],
   authors: [{ name: 'Mentorship Platform Team' }],
-  viewport: 'width=device-width, initial-scale=1',
   robots: 'index, follow',
+  metadataBase: new URL('http://localhost:3000'),
   openGraph: {
     type: 'website',
     locale: 'en_US',
@@ -35,6 +35,11 @@ export const metadata: Metadata = {
     title: 'Mentorship Platform',
     description: 'Connect with mentors and mentees for personalized learning experiences',
   },
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
 };
 
 export default function RootLayout({

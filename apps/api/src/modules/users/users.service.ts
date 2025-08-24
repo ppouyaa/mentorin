@@ -301,4 +301,279 @@ export class UsersService {
       ],
     });
   }
+
+  async getProfile(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        profile: true,
+        mentorProfile: true,
+        matchPreferences: true,
+      },
+    });
+
+    if (!user || !user.profile) {
+      return null;
+    }
+
+    const socialLinks = user.profile.socialLinks as any;
+    const mentorEducation = user.mentorProfile?.education as any;
+    const mentorAvailability = user.mentorProfile?.availability as any;
+    const menteeAvailability = user.matchPreferences?.availability as any;
+
+    return {
+      id: user.id,
+      displayName: user.profile.displayName,
+      bio: user.profile.bio,
+      location: user.profile.city,
+      timezone: user.profile.timezone,
+      avatarUrl: user.profile.avatarUrl,
+      website: user.profile.website,
+      linkedin: socialLinks?.linkedin,
+      github: socialLinks?.github,
+      role: user.role,
+      isPublic: user.mentorProfile?.isPublic || false,
+      // Mentor-specific fields
+      expertise: user.mentorProfile?.specializations || [],
+      experience: user.mentorProfile?.experienceYears,
+      education: mentorEducation?.degree,
+      hourlyRate: user.mentorProfile?.hourlyRateCents ? user.mentorProfile.hourlyRateCents / 100 : undefined,
+      availability: mentorAvailability?.times || [],
+      languages: user.profile.languages || [],
+      // Mentee-specific fields (stored in matchPreferences)
+      goals: user.matchPreferences?.goals || [],
+      currentRole: menteeAvailability?.currentRole,
+      skills: menteeAvailability?.skillsToDevelop || [],
+      preferredMentoringStyle: menteeAvailability?.preferredMentoringStyle,
+      budget: user.matchPreferences?.budgetCents ? 
+        (user.matchPreferences.budgetCents <= 5000 ? 'low' : 
+         user.matchPreferences.budgetCents <= 10000 ? 'medium' : 'high') : 'flexible',
+      timeCommitment: menteeAvailability?.timeCommitment,
+    };
+  }
+
+  async createProfile(userId: string, profileData: any) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { profile: true },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (user.profile) {
+      throw new Error('Profile already exists');
+    }
+
+    const { role, ...profileFields } = profileData;
+
+    // Create base profile
+    const profile = await this.prisma.profile.create({
+      data: {
+        userId,
+        displayName: profileFields.displayName,
+        bio: profileFields.bio,
+        city: profileFields.location,
+        timezone: profileFields.timezone,
+        avatarUrl: profileFields.avatarUrl,
+        website: profileFields.website,
+        socialLinks: {
+          linkedin: profileFields.linkedin,
+          github: profileFields.github,
+        },
+        languages: profileFields.languages || [],
+      },
+    });
+
+    // Create role-specific profile
+    if (role === 'mentor') {
+      await this.prisma.mentorProfile.create({
+        data: {
+          userId,
+          headline: profileFields.bio,
+          hourlyRateCents: profileFields.hourlyRate * 100,
+          experienceYears: profileFields.experience,
+          specializations: profileFields.expertise,
+          education: {
+            degree: profileFields.education,
+            institution: '',
+            year: new Date().getFullYear(),
+          },
+          availability: {
+            times: profileFields.availability,
+          },
+          isPublic: false, // Default to private
+        },
+      });
+    } else if (role === 'mentee') {
+      // For mentees, store preferences in MatchPreferences
+      await this.prisma.matchPreferences.create({
+        data: {
+          userId,
+          goals: profileFields.goals,
+          preferredLanguages: profileFields.languages || [],
+          budgetCents: profileFields.budget === 'low' ? 5000 : 
+                       profileFields.budget === 'medium' ? 10000 : 
+                       profileFields.budget === 'high' ? 20000 : null,
+          availability: {
+            times: profileFields.availability,
+            timeCommitment: profileFields.timeCommitment,
+            preferredMentoringStyle: profileFields.preferredMentoringStyle,
+            currentRole: profileFields.currentRole,
+            skillsToDevelop: profileFields.skills,
+          },
+        },
+      });
+    }
+
+    return this.getProfile(userId);
+  }
+
+  async updateProfile(userId: string, profileData: any) {
+    // Debug: Log the received data
+    console.log('Backend received profile data:', profileData);
+    
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { 
+        profile: true,
+        mentorProfile: true,
+        matchPreferences: true,
+      },
+    });
+
+    if (!user || !user.profile) {
+      throw new Error('Profile not found');
+    }
+
+    // Update base profile
+    await this.prisma.profile.update({
+      where: { userId },
+      data: {
+        displayName: profileData.displayName,
+        bio: profileData.bio,
+        city: profileData.location,
+        website: profileData.website,
+        socialLinks: {
+          linkedin: profileData.linkedin,
+          github: profileData.github,
+        },
+        languages: profileData.languages || user.profile.languages,
+      },
+    });
+
+    // Update role-specific profile
+    if (user.role === 'mentor') {
+      if (user.mentorProfile) {
+        await this.prisma.mentorProfile.update({
+          where: { userId },
+          data: {
+            headline: profileData.bio,
+            hourlyRateCents: profileData.hourlyRate * 100,
+            experienceYears: profileData.experience,
+            specializations: profileData.expertise,
+            education: {
+              degree: profileData.education,
+              institution: '',
+              year: new Date().getFullYear(),
+            },
+            availability: {
+              times: profileData.availability,
+            },
+            // Don't change isPublic status here - only when explicitly requested
+          },
+        });
+      } else {
+        // Create mentor profile if it doesn't exist
+        await this.prisma.mentorProfile.create({
+          data: {
+            userId,
+            headline: profileData.bio,
+            hourlyRateCents: profileData.hourlyRate * 100,
+            experienceYears: profileData.experience,
+            specializations: profileData.expertise,
+            education: {
+              degree: profileData.education,
+              institution: '',
+              year: new Date().getFullYear(),
+            },
+            availability: {
+              times: profileData.availability,
+            },
+            isPublic: false,
+          },
+        });
+      }
+    } else if (user.role === 'mentee') {
+      if (user.matchPreferences) {
+        await this.prisma.matchPreferences.update({
+          where: { userId },
+          data: {
+            goals: profileData.goals,
+            preferredLanguages: profileData.languages || [],
+            budgetCents: profileData.budget === 'low' ? 5000 : 
+                         profileData.budget === 'medium' ? 10000 : 
+                         profileData.budget === 'high' ? 20000 : null,
+            availability: {
+              times: profileData.availability,
+              timeCommitment: profileData.timeCommitment,
+              preferredMentoringStyle: profileData.preferredMentoringStyle,
+              currentRole: profileData.currentRole,
+              skillsToDevelop: profileData.skills,
+            },
+          },
+        });
+      } else {
+        // Create match preferences if they don't exist
+        await this.prisma.matchPreferences.create({
+          data: {
+            userId,
+            goals: profileData.goals,
+            preferredLanguages: profileData.languages || [],
+            budgetCents: profileData.budget === 'low' ? 5000 : 
+                         profileData.budget === 'medium' ? 10000 : 
+                         profileData.budget === 'high' ? 20000 : null,
+            availability: {
+              times: profileData.availability,
+              timeCommitment: profileData.timeCommitment,
+              preferredMentoringStyle: profileData.preferredMentoringStyle,
+              currentRole: profileData.currentRole,
+              skillsToDevelop: profileData.skills,
+            },
+          },
+        });
+      }
+    }
+
+    return this.getProfile(userId);
+  }
+
+  async makeProfilePublic(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      include: { mentorProfile: true },
+    });
+
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    if (user.role !== 'mentor') {
+      throw new Error('Only mentors can make their profile public');
+    }
+
+    if (!user.mentorProfile) {
+      throw new Error('Mentor profile not found');
+    }
+
+    await this.prisma.mentorProfile.update({
+      where: { userId },
+      data: {
+        isPublic: true,
+      },
+    });
+
+    return { message: 'Profile made public successfully' };
+  }
 }

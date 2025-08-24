@@ -51,8 +51,8 @@ export default function SignupPage() {
 
       if (response.ok) {
         const result = await response.json();
-        toast.success('Account created successfully! Please check your email to verify your account.');
-        router.push('/auth/login');
+        toast.success('Account created successfully! Please complete your profile.');
+        router.push('/profile/setup');
       } else {
         const error = await response.json();
         toast.error(error.message || 'Something went wrong. Please try again.');
