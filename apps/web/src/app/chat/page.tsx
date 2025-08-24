@@ -2,10 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { useSession } from 'next-auth/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Card, CardContent, CardHeader, CardTitle } from '@mentorship/ui';
+import { Button } from '@mentorship/ui';
+import { Input } from '@mentorship/ui';
+import { Avatar, AvatarFallback, AvatarImage } from '@mentorship/ui';
 import { Send, Search, MoreVertical } from 'lucide-react';
 
 interface Message {

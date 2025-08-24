@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@mentorship/ui';
+import { Button } from '@mentorship/ui';
+import { Input } from '@mentorship/ui';
+import { Textarea } from '@mentorship/ui';
+import { Badge } from '@mentorship/ui';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@mentorship/ui';
 import { 
   Plus, 
   Edit, 
