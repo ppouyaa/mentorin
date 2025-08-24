@@ -69,7 +69,7 @@ export const authOptions: NextAuthOptions = {
   pages: {
     signIn: '/auth/login',
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || 'your-super-secret-key-change-this-in-production',
 };
 
 export default NextAuth(authOptions);

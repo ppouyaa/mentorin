@@ -2,12 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Card, CardContent, CardHeader, CardTitle } from '@mentorship/ui';
+import { Button } from '@mentorship/ui';
+import { Input } from '@mentorship/ui';
+import { Textarea } from '@mentorship/ui';
+import { Badge } from '@mentorship/ui';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@mentorship/ui';
+import AppLayout from '@/components/layout/app-layout';
 import { 
   Plus, 
   Edit, 
@@ -224,25 +225,20 @@ export default function OfferingsPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[...Array(6)].map((_, i) => (
-              <div key={i} className="h-64 bg-gray-200 rounded"></div>
-            ))}
-          </div>
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="h-64 bg-gray-200 rounded"></div>
+          ))}
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="container mx-auto px-4 py-8">
+    return (
+    <AppLayout>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">
-          {isMentor ? 'My Offerings' : 'Available Sessions'}
-        </h1>
         {isMentor && (
           <Dialog open={showCreateDialog} onOpenChange={setShowCreateDialog}>
             <DialogTrigger asChild>
@@ -563,6 +559,6 @@ export default function OfferingsPage() {
           </DialogContent>
         </Dialog>
       )}
-    </div>
+    </AppLayout>
   );
 }
