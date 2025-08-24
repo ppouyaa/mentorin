@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -24,6 +23,7 @@ import {
   Award,
   Calendar
 } from 'lucide-react';
+import AppLayout from '@/components/layout/app-layout';
 
 // Profile schema for editing
 const profileSchema = z.object({
@@ -107,8 +107,7 @@ interface UserProfile {
 }
 
 export default function ProfilePage() {
-  const { data: session, status } = useSession();
-  const router = useRouter();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -126,15 +125,10 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    if (status === 'loading') return;
-    
-    if (!session) {
-      router.push('/auth/login');
-      return;
+    if (session) {
+      fetchProfile();
     }
-
-    fetchProfile();
-  }, [session, status, router]);
+  }, [session]);
 
   const fetchProfile = async () => {
     try {
@@ -169,7 +163,7 @@ export default function ProfilePage() {
         });
       } else if (response.status === 404) {
         // Profile doesn't exist, redirect to setup
-        router.push('/profile/setup');
+        window.location.href = '/profile/setup';
         return;
       } else {
         toast.error('Failed to load profile');
@@ -272,9 +266,9 @@ export default function ProfilePage() {
     setValue(field, newValues);
   };
 
-  if (status === 'loading' || isLoadingProfile) {
+  if (isLoadingProfile) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="flex items-center justify-center h-64">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading profile...</p>
@@ -283,38 +277,37 @@ export default function ProfilePage() {
     );
   }
 
-  if (!session || !profile) {
+  if (!profile) {
     return null;
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <AppLayout>
+      <div className="max-w-4xl mx-auto">
         <div className="mb-8">
           <div className="flex justify-between items-center">
-            <h1 className="text-3xl font-bold text-gray-900">Profile</h1>
-                         {!isEditing && (
-               <div className="flex space-x-3">
-                 <Button
-                   onClick={() => setIsEditing(true)}
-                   variant="outline"
-                   className="flex items-center"
-                 >
-                   <Edit className="w-4 h-4 mr-2" />
-                   Edit Profile
-                 </Button>
-                 {profile.role === 'mentor' && (
-                   <Button
-                     onClick={handleMakePublic}
-                     variant="outline"
-                     className="flex items-center"
-                   >
-                     <Globe className="w-4 h-4 mr-2" />
-                     Make Public
-                   </Button>
-                 )}
-               </div>
-             )}
+            {!isEditing && (
+              <div className="flex space-x-3">
+                <Button
+                  onClick={() => setIsEditing(true)}
+                  variant="outline"
+                  className="flex items-center"
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Edit Profile
+                </Button>
+                {profile.role === 'mentor' && (
+                  <Button
+                    onClick={handleMakePublic}
+                    variant="outline"
+                    className="flex items-center"
+                  >
+                    <Globe className="w-4 h-4 mr-2" />
+                    Make Public
+                  </Button>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -918,6 +911,6 @@ export default function ProfilePage() {
           </div>
         </div>
       </div>
-    </div>
+    </AppLayout>
   );
 }

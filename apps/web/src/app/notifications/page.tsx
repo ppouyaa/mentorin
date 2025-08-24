@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import AppLayout from '@/components/layout/app-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@mentorship/ui';
 import { Button } from '@mentorship/ui';
 import { Badge } from '@mentorship/ui';
@@ -199,7 +200,8 @@ export default function NotificationsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <AppLayout>
+      <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-8">
         <div>
           <h1 className="text-3xl font-bold">Notifications</h1>
@@ -396,6 +398,7 @@ export default function NotificationsPage() {
           </div>
         </CardContent>
       </Card>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

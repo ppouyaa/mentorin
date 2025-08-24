@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useSession } from 'next-auth/react';
+import AppLayout from '@/components/layout/app-layout';
 import { Card, CardContent, CardHeader, CardTitle } from '@mentorship/ui';
 import { Button } from '@mentorship/ui';
 import { Badge } from '@mentorship/ui';
@@ -138,7 +139,8 @@ export default function ReviewsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <AppLayout>
+      <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold mb-8">Reviews</h1>
 
       <Tabs defaultValue="overview" className="w-full">
@@ -159,7 +161,7 @@ export default function ReviewsPage() {
                     <p className="text-2xl font-bold">{getAverageRating(receivedReviews)}</p>
                   </div>
                   <div className="flex">
-                    {renderStars(parseFloat(getAverageRating(receivedReviews)))}
+                    {renderStars(parseFloat(getAverageRating(receivedReviews).toString()))}
                   </div>
                 </div>
               </CardContent>
@@ -403,6 +405,7 @@ export default function ReviewsPage() {
           )}
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </AppLayout>
   );
 }

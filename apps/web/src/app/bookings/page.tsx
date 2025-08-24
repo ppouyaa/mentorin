@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@mentorship/ui';
 import { Button } from '@mentorship/ui';
 import { Badge } from '@mentorship/ui';
 import { Calendar, Clock, User, Video, MessageSquare } from 'lucide-react';
+import AppLayout from '@/components/layout/app-layout';
 
 interface Booking {
   id: string;
@@ -98,23 +99,20 @@ export default function BookingsPage() {
 
   if (loading) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <div className="animate-pulse">
-          <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
-          <div className="space-y-4">
-            {[...Array(3)].map((_, i) => (
-              <div key={i} className="h-32 bg-gray-200 rounded"></div>
-            ))}
-          </div>
+      <div className="animate-pulse">
+        <div className="h-8 bg-gray-200 rounded w-1/4 mb-6"></div>
+        <div className="space-y-4">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-32 bg-gray-200 rounded"></div>
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <AppLayout>
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">My Bookings</h1>
         <Button onClick={() => window.location.href = '/mentors'}>
           Book New Session
         </Button>
@@ -247,6 +245,6 @@ export default function BookingsPage() {
           ))}
         </div>
       )}
-    </div>
+    </AppLayout>
   );
 }
